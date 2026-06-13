@@ -199,6 +199,9 @@ nav:
       - LLM-guided spec search: user-guide/llm-guided-spec-search.md
   - Leaderboard: leaderboard.md
   - Roadmap: development/roadmap.md
+  - Research:
+      - Usefulness Research Report: research/usefulness-research-report.md
+      - Usefulness Roadmap: research/usefulness-roadmap.md
   - Development:
       - Mining: development/mining.md
       - Pearl Model Enablement: development/pearl-model-enablement.md
