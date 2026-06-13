@@ -1,0 +1,347 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode (toggled on <html>) instead of media-only. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ----------------------------------------------------------------------------
+ * Design tokens. Fresh "iris/indigo" identity (distinct from the cyan HUD app).
+ * Light defaults; .dark overrides at runtime.
+ * ------------------------------------------------------------------------- */
+:root {
+  --background: #f7f7f9;
+  --surface: #ffffff;
+  --surface-2: #f1f1f4;
+  --border: #11111712;
+  --text: #0b0b12;
+  --muted: #62636c;
+  --accent: #5b5bd6;
+  --accent-fg: #ffffff;
+  --success: #16a34a;
+  --warning: #c2740b;
+  --danger: #dc2626;
+  --ring: #5b5bd6;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0a0a0f;
+  --surface: #121218;
+  --surface-2: #1b1b23;
+  --border: #ffffff14;
+  --text: #ececf1;
+  --muted: #9596a3;
+  --accent: #8b8bf6;
+  --accent-fg: #0b0b14;
+  --success: #3ddc97;
+  --warning: #f5a524;
+  --danger: #ff6b6b;
+  --ring: #8b8bf6;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-ring: var(--ring);
+
+  --font-sans: 'Geist Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Menlo', 'Cascadia Code', monospace;
+
+  --radius-sm: 0.4rem;
+  --radius-md: 0.6rem;
+  --radius-lg: 0.85rem;
+  --radius-xl: 1.15rem;
+  --radius-2xl: 1.5rem;
+
+  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--accent) 30%, transparent),
+    0 8px 30px -8px color-mix(in oklab, var(--accent) 35%, transparent);
+
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 30%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Thin, theme-aware scrollbars */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted) 40%, transparent) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--muted) 35%, transparent);
+    border-radius: 9999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--muted) 55%, transparent);
+  }
+  .glass {
+    background: color-mix(in oklab, var(--surface) 78%, transparent);
+    backdrop-filter: blur(12px) saturate(1.4);
+  }
+  .bg-grid {
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--muted) 22%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
+  }
+}
+
+/* Caret that blinks while assistant text streams in */
+@keyframes oj-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+.streaming-caret::after {
+  content: '';
+  display: inline-block;
+  width: 0.5ch;
+  height: 1.05em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--color-accent);
+  border-radius: 1px;
+  animation: oj-blink 1s steps(2, start) infinite;
+}
+
+/* Radix Dialog / Sheet entrance animations */
+@keyframes oj-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes oj-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes oj-slide-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes oj-slide-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+[data-oj-overlay][data-state='open'] {
+  animation: oj-fade-in 0.16s ease;
+}
+[data-oj-content][data-state='open'] {
+  animation: oj-pop-in 0.2s var(--ease-spring);
+}
+[data-oj-content][data-oj-side='right'][data-state='open'] {
+  animation: oj-slide-right 0.24s var(--ease-spring);
+}
+[data-oj-content][data-oj-side='left'][data-state='open'] {
+  animation: oj-slide-left 0.24s var(--ease-spring);
+}
+
+/* Markdown typography for chat messages (no tailwind-typography dependency) */
+.oj-prose {
+  font-size: 0.925rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  word-break: break-word;
+}
+.oj-prose > :first-child {
+  margin-top: 0;
+}
+.oj-prose > :last-child {
+  margin-bottom: 0;
+}
+.oj-prose p {
+  margin: 0.6em 0;
+}
+.oj-prose h1,
+.oj-prose h2,
+.oj-prose h3,
+.oj-prose h4 {
+  margin: 1.1em 0 0.5em;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.oj-prose h1 {
+  font-size: 1.35em;
+}
+.oj-prose h2 {
+  font-size: 1.2em;
+}
+.oj-prose h3 {
+  font-size: 1.05em;
+}
+.oj-prose ul,
+.oj-prose ol {
+  margin: 0.6em 0;
+  padding-left: 1.4em;
+}
+.oj-prose ul {
+  list-style: disc;
+}
+.oj-prose ol {
+  list-style: decimal;
+}
+.oj-prose li {
+  margin: 0.25em 0;
+}
+.oj-prose li::marker {
+  color: var(--color-muted);
+}
+.oj-prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.oj-prose strong {
+  font-weight: 650;
+}
+.oj-prose blockquote {
+  margin: 0.7em 0;
+  padding-left: 0.9em;
+  border-left: 3px solid color-mix(in oklab, var(--accent) 50%, transparent);
+  color: var(--color-muted);
+}
+.oj-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+.oj-prose :not(pre) > code {
+  background: var(--color-surface-2);
+  padding: 0.12em 0.4em;
+  border-radius: 0.35rem;
+}
+.oj-prose pre {
+  margin: 0.8em 0;
+  padding: 0.9em 1em;
+  border: 1px solid var(--color-border);
+  border-radius: 0.7rem;
+  background: color-mix(in oklab, var(--surface-2) 70%, var(--background));
+  overflow-x: auto;
+}
+.oj-prose pre code {
+  background: transparent;
+  padding: 0;
+}
+.oj-prose table {
+  width: 100%;
+  margin: 0.8em 0;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+.oj-prose th,
+.oj-prose td {
+  border: 1px solid var(--color-border);
+  padding: 0.4em 0.6em;
+  text-align: left;
+}
+.oj-prose th {
+  background: var(--color-surface-2);
+  font-weight: 600;
+}
+.oj-prose hr {
+  margin: 1.2em 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Compact syntax highlighting for rehype-highlight output */
+.hljs {
+  color: var(--color-text);
+  background: transparent;
+}
+.hljs-comment,
+.hljs-quote {
+  color: var(--color-muted);
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+  color: #c084fc;
+}
+.hljs-string,
+.hljs-title,
+.hljs-name,
+.hljs-attribute,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: #34d399;
+}
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-type,
+.hljs-params {
+  color: #fbbf24;
+}
+.hljs-function .hljs-title,
+.hljs-class .hljs-title {
+  color: #60a5fa;
+}
