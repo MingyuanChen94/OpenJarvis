@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { Bot, Pause, Play } from 'lucide-react';
 import { Badge, type BadgeProps } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -24,7 +24,7 @@ export function AgentCard({
 }) {
   const running = agent.status === 'running';
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -66,6 +66,6 @@ export function AgentCard({
           )}
         </Button>
       </Card>
-    </motion.div>
+    </m.div>
   );
 }

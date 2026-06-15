@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { Coins, Cpu, Gauge, Zap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -25,7 +25,7 @@ export function DashboardView() {
 
   return (
     <div className="scrollbar-thin h-full overflow-y-auto">
-      <motion.div
+      <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -87,7 +87,7 @@ export function DashboardView() {
             {series.length > 1 ? <ThroughputChart data={series} /> : <Skeleton className="h-[120px] w-full" />}
           </CardContent>
         </Card>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

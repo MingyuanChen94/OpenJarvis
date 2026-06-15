@@ -19,7 +19,7 @@ export function EnergyGauge({ watts, max = 100 }: { watts: number; max?: number 
             cornerRadius={12}
             fill="var(--color-accent)"
             background={{ fill: 'var(--color-surface-2)' }}
-            isAnimationActive
+            isAnimationActive={false}
           />
         </RadialBarChart>
       </ResponsiveContainer>

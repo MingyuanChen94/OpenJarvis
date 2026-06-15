@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router';
 import { Bot, LayoutDashboard, MessageSquare, Settings } from 'lucide-react';
-import { motion } from 'motion/react';
 import { cn } from '@/lib/cn';
 import { useUI } from '@/store/ui';
 import { JarvisMark } from '@/components/layout/JarvisMark';
@@ -39,11 +38,7 @@ export function SideRail() {
                 )}
               >
                 {isActive && (
-                  <motion.div
-                    layoutId="rail-active"
-                    className="absolute inset-0 rounded-lg bg-surface-2"
-                    transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                  />
+                  <span className="absolute inset-0 rounded-lg bg-surface-2 transition-colors" />
                 )}
                 <it.icon className="relative h-[18px] w-[18px] shrink-0" />
                 {!collapsed && <span className="relative">{it.label}</span>}
