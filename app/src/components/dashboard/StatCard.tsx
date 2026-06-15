@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { Card } from '@/components/ui/Card';
 import { useCountUp } from '@/hooks/useCountUp';
 
@@ -15,7 +15,7 @@ interface StatCardProps {
 export function StatCard({ label, value, format, icon: Icon, sublabel, delay = 0 }: StatCardProps) {
   const display = useCountUp(value);
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -30,6 +30,6 @@ export function StatCard({ label, value, format, icon: Icon, sublabel, delay = 0
         <div className="mt-2 text-2xl font-semibold tracking-tight tabular-nums">{format(display)}</div>
         {sublabel && <div className="mt-0.5 text-xs text-muted">{sublabel}</div>}
       </Card>
-    </motion.div>
+    </m.div>
   );
 }

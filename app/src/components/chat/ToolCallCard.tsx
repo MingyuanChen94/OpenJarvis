@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { Check, ChevronDown, Loader2, Wrench, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import type { ToolCall } from '@/types';
@@ -51,7 +51,7 @@ export function ToolCallCard({ tool }: { tool: ToolCall }) {
       </button>
       <AnimatePresence initial={false}>
         {open && hasDetail && (
-          <motion.div
+          <m.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -76,7 +76,7 @@ export function ToolCallCard({ tool }: { tool: ToolCall }) {
                 </div>
               )}
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

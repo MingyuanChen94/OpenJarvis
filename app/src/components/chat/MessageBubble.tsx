@@ -1,19 +1,24 @@
-import { memo } from 'react';
-import { motion } from 'motion/react';
+import { lazy, memo, Suspense } from 'react';
+import { m } from 'motion/react';
 import { AlertCircle } from 'lucide-react';
-import { Markdown } from '@/components/chat/Markdown';
 import { ToolCallCard } from '@/components/chat/ToolCallCard';
 import { ThinkingDots } from '@/components/chat/ThinkingDots';
 import { JarvisMark } from '@/components/layout/JarvisMark';
 import { cn } from '@/lib/cn';
 import type { Message } from '@/types';
 
+// react-markdown + highlighter is the largest dependency on this screen; load it
+// only when a message actually needs rendering (the empty state never does).
+const Markdown = lazy(() =>
+  import('@/components/chat/Markdown').then((m) => ({ default: m.Markdown })),
+);
+
 export const MessageBubble = memo(function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user';
   const showThinking = message.streaming && !message.content && (message.toolCalls?.length ?? 0) === 0;
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
@@ -32,7 +37,11 @@ export const MessageBubble = memo(function MessageBubble({ message }: { message:
             {showThinking && <ThinkingDots />}
             {message.content && (
               <div className={cn(message.streaming && 'streaming-caret')}>
-                <Markdown content={message.content} />
+                <Suspense
+                  fallback={<div className="oj-prose whitespace-pre-wrap">{message.content}</div>}
+                >
+                  <Markdown content={message.content} />
+                </Suspense>
               </div>
             )}
             {message.error && (
@@ -44,6 +53,6 @@ export const MessageBubble = memo(function MessageBubble({ message }: { message:
           </div>
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 });
