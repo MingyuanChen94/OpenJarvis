@@ -26,7 +26,7 @@ export function SavingsChart({ data }: { data: ProviderSavings[] }) {
           cursor={{ fill: 'var(--color-surface-2)' }}
           content={<ChartTooltip formatter={formatUsd} />}
         />
-        <Bar dataKey="cost" radius={[6, 6, 0, 0]} isAnimationActive>
+        <Bar dataKey="cost" radius={[6, 6, 0, 0]} isAnimationActive={false}>
           {rows.map((_, i) => (
             <Cell key={i} fill="var(--color-accent)" />
           ))}
