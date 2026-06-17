@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import patch
 
 import pytest
@@ -70,3 +70,28 @@ def test_sync_yields_tasks(connector):
     assert docs[0].title == "Review PR #42"
     assert docs[0].metadata["status"] == "needsAction"
     assert docs[1].metadata["status"] == "completed"
+
+
+def test_updated_min_param_well_formed_for_aware_datetime(connector):
+    """Regression: an incremental sync passes a tz-aware UTC ``since``; the
+    outbound ``updatedMin`` must be a single-``Z`` RFC 3339 value, not the
+    malformed ``…+00:00Z`` that the Google Tasks API rejects."""
+    captured: dict = {}
+
+    def _fake_get(token, endpoint, params=None):
+        if endpoint == "users/@me/lists":
+            return _TASK_LISTS_RESPONSE
+        captured["params"] = params
+        return _TASKS_RESPONSE
+
+    since = datetime(2026, 6, 17, 23, 18, 49, 990147, tzinfo=timezone.utc)
+    with patch(
+        "openjarvis.connectors.google_tasks._tasks_api_get",
+        side_effect=_fake_get,
+    ):
+        list(connector.sync(since=since))
+
+    sent = captured["params"]["updatedMin"]
+    assert sent == "2026-06-17T23:18:49Z"  # old code emitted "...+00:00Z"
+    assert "+00:00" not in sent
+    assert sent.endswith("Z") and sent.count("Z") == 1

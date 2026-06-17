@@ -5,13 +5,14 @@ Uses OAuth2 tokens via the shared Google OAuth helper module.
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional
 
 import httpx
 
 from openjarvis.connectors._stubs import BaseConnector, Document, SyncStatus
+from openjarvis.connectors._timeutil import to_utc_z
 from openjarvis.connectors.google_auth import call_with_refresh
 from openjarvis.connectors.oauth import load_tokens, resolve_google_credentials
 from openjarvis.core.config import DEFAULT_CONFIG_DIR
@@ -86,7 +87,9 @@ class GoogleTasksConnector(BaseConnector):
                 "showHidden": "false",
             }
             if since:
-                params["updatedMin"] = since.isoformat() + "Z"
+                # RFC 3339 UTC; ``to_utc_z`` avoids the ``…+00:00Z`` that a
+                # tz-aware incremental ``since`` would otherwise produce.
+                params["updatedMin"] = to_utc_z(since)
 
             tasks = call_with_refresh(
                 _tasks_api_get,
@@ -104,7 +107,7 @@ class GoogleTasksConnector(BaseConnector):
                         task.get("updated", "").replace("Z", "+00:00")
                     )
                     if task.get("updated")
-                    else datetime.now()
+                    else datetime.now(tz=timezone.utc)
                 )
 
                 yield Document(
