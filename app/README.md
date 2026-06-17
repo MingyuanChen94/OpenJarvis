@@ -8,7 +8,9 @@ system; it does **not** touch or depend on the existing `frontend/` (Tauri) app.
 > can click through every screen and watch chat "stream" with zero setup.
 
 > 📖 **New here? See [INSTALL.md](./INSTALL.md)** for a comprehensive step-by-step
-> install, run, build, deploy, and troubleshooting guide.
+> install, run, build, deploy, and troubleshooting guide. To run it as a container
+> on an Apple Silicon Mac, see **[CONTAINER.md](./CONTAINER.md)** (Apple `container`,
+> Docker, or Podman).
 
 ## Highlights
 
