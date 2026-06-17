@@ -7,6 +7,9 @@ system; it does **not** touch or depend on the existing `frontend/` (Tauri) app.
 > Runs fully **without a backend** thanks to an auto-detected demo/mock mode, so you
 > can click through every screen and watch chat "stream" with zero setup.
 
+> 📖 **New here? See [INSTALL.md](./INSTALL.md)** for a comprehensive step-by-step
+> install, run, build, deploy, and troubleshooting guide.
+
 ## Highlights
 
 - **Flagship chat** — streaming responses with an animated caret, markdown + syntax
