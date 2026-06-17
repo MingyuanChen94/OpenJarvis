@@ -142,14 +142,26 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/open-jarvis/OpenJarvis
 
+# Support files that intentionally live in docs/ but are not nav pages
+# (an asset README and the abbreviations snippet appended via pymdownx).
+not_in_nav: |
+  /assets/showcase/README.md
+  /includes/abbreviations.md
+
 nav:
   - Home: index.md
   - Getting Started:
       - Installation: getting-started/installation.md
       - macOS Guide: getting-started/macos.md
+      - Linux: getting-started/linux.md
+      - WSL2 (Windows): getting-started/wsl2.md
+      - Windows (native): getting-started/windows-native.md
+      - Installer Reference: getting-started/install.md
       - Quick Start: getting-started/quickstart.md
       - Code Snippets: getting-started/snippets.md
       - Configuration: getting-started/configuration.md
+  - Downloads: downloads.md
+  - Telemetry & Privacy: telemetry.md
   - Showcase:
       - Overview: showcase/index.md
       - Morning Brief: showcase/morning-brief.md
@@ -164,6 +176,7 @@ nav:
       - Scheduled Personal Ops: tutorials/scheduled-ops.md
       - Messaging Hub: tutorials/messaging-hub.md
       - Code Companion: tutorials/code-companion.md
+      - Skills Workflow: tutorials/skills-workflow.md
   - Architecture:
       - Overview: architecture/overview.md
       - Intelligence: architecture/intelligence.md
@@ -171,6 +184,8 @@ nav:
       - Agents: architecture/agents.md
       - Tools & Memory: architecture/memory.md
       - Learning: architecture/learning.md
+      - Channels: architecture/channels.md
+      - Skills: architecture/skills.md
       - Query Flow: architecture/query-flow.md
       - Security: architecture/security.md
       - Design Principles: architecture/design-principles.md
@@ -188,6 +203,8 @@ nav:
       - Simple Chat: user-guide/chat-simple.md
       - Agents: user-guide/agents.md
       - Channels & Connectors: user-guide/channels-and-connectors.md
+      - Channels (reference): user-guide/channels.md
+      - Skills: user-guide/skills.md
       - Tools: user-guide/tools.md
       - Memory: user-guide/memory.md
       - External MCP Servers: user-guide/mcp-external-servers.md
@@ -196,12 +213,30 @@ nav:
       - Evaluations: user-guide/evaluations.md
       - Benchmarks: user-guide/benchmarks.md
       - Security: user-guide/security.md
+      - ACE Prompt Optimizer: learning/ace.md
       - LLM-guided spec search: user-guide/llm-guided-spec-search.md
+  - Deployment:
+      - Overview: deployment/index.md
+      - API Server: deployment/api-server.md
+      - Docker: deployment/docker.md
+      - systemd (Linux): deployment/systemd.md
+      - launchd (macOS): deployment/launchd.md
   - Leaderboard: leaderboard.md
   - Roadmap: development/roadmap.md
   - Research:
       - Usefulness Research Report: research/usefulness-research-report.md
       - Usefulness Roadmap: research/usefulness-roadmap.md
   - Development:
+      - Contributing: development/contributing.md
       - Mining: development/mining.md
       - Pearl Model Enablement: development/pearl-model-enablement.md
+      - Mining NVIDIA Validation: development/mining-nvidia-validation.md
+      - Release Checklist: development/release-checklist.md
+      - Desktop Auto-Update: desktop-auto-update.md
+      - Agent QA Runbook: testing/agent-qa-runbook.md
+      - Design Notes:
+          - Apple Silicon Pearl Mining — Design: design/2026-05-05-apple-silicon-pearl-mining-design.md
+          - Apple Silicon Pearl Mining — Plan v1: design/2026-05-05-apple-silicon-pearl-mining-plan-v1.md
+          - Pearl Coordination — Discussion Draft: design/2026-05-05-pearl-coordination-discussion-draft.md
+          - vLLM Pearl Mining Integration — Design: design/2026-05-05-vllm-pearl-mining-integration-design.md
+          - vLLM Pearl Mining Integration — Plan: design/2026-05-05-vllm-pearl-mining-integration-plan.md
