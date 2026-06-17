@@ -293,6 +293,11 @@ npx serve dist            # quick local check
 (client-side routes like `/dashboard`). `vite preview` and most static hosts do this
 automatically; for Nginx use `try_files $uri /index.html;`.
 
+**Containerized (Docker / Podman / Apple `container`):** the repo ships a `Dockerfile`
+that builds an nginx image serving the static PWA (with SPA fallback and an optional,
+SSE-safe backend proxy). See **[CONTAINER.md](./CONTAINER.md)** — it covers Apple's
+`container` tool on Apple Silicon Macs as well as Docker/Podman.
+
 **Connecting to a backend in production:**
 
 - **Same origin (simplest):** serve `dist/` behind the same host/proxy as the backend
