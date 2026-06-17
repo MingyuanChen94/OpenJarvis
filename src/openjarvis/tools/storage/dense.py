@@ -8,7 +8,7 @@ L2-normalized matrix of document embeddings.
 Design notes
 ------------
 * **No persistence.** The index lives in memory and is rebuilt at
-  startup via :mod:`scripts.index_docs`. The docs corpus is small
+  startup via :mod:`scripts.dev.index_docs`. The docs corpus is small
   (~700 chunks) so this is fine and keeps the implementation simple.
 * **Normalization happens at embed time**, not at query time. Storing
   unit vectors means retrieval is one ``docs @ query`` dot product.
