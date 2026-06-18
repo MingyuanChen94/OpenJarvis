@@ -426,6 +426,22 @@ class ExecutePendingActionsTool(BaseTool):
             return False, str(exc)
 
 
+# Action types that cause external, user-visible, or irreversible side effects
+# (sending messages, mutating mailboxes/calendars).  These must never be
+# auto-executed purely on an LLM-supplied ``trivial`` tier — a trivial
+# classification from the model is not a trusted authorization.  They always
+# require an explicit human approval or a user-remembered ``always_approve``.
+EFFECTFUL_ACTION_TYPES = frozenset(
+    {
+        "email_delete",
+        "email_archive",
+        "sms_send",
+        "calendar_decline",
+        "calendar_accept",
+    }
+)
+
+
 # ---------------------------------------------------------------------------
 # Built-in action executors (thin wrappers around connector/channel APIs)
 # ---------------------------------------------------------------------------
@@ -465,9 +481,17 @@ def _exec_sms_send(payload: Dict[str, Any]) -> Tuple[bool, str]:
     if not contact or not body:
         return False, "Missing contact or body in payload"
     try:
-        from openjarvis.channels.imessage_daemon import send_imessage
+        from openjarvis.channels.imessage_daemon import (
+            is_valid_imessage_recipient,
+            send_imessage,
+        )
 
-        send_imessage(contact, body)
+        # Reject malformed recipients before they reach the AppleScript sink
+        # (prevents osascript injection via an LLM-supplied ``contact``).
+        if not is_valid_imessage_recipient(contact):
+            return False, f"Invalid iMessage recipient: {contact!r}"
+        if not send_imessage(contact, body):
+            return False, f"Failed to send iMessage to {contact}"
         return True, f"Sent iMessage to {contact}"
     except Exception as exc:
         return False, str(exc)
@@ -575,6 +599,7 @@ def parse_approval_response(
 
 
 __all__ = [
+    "EFFECTFUL_ACTION_TYPES",
     "CheckPermissionTool",
     "ExecutePendingActionsTool",
     "GetPendingActionsTool",

@@ -37,6 +37,7 @@ called from your app startup:
 from __future__ import annotations
 
 import json
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
@@ -53,7 +54,9 @@ from openjarvis.tools.approval_store import (
     TIER_TRIVIAL,
     ApprovalStore,
 )
-from openjarvis.tools.proactive_tools import get_store
+from openjarvis.tools.proactive_tools import EFFECTFUL_ACTION_TYPES, get_store
+
+logger = logging.getLogger(__name__)
 
 _SYSTEM_PROMPT = """You are a proactive personal assistant agent. You have already collected
 data from the user's connected sources (email, messages, calendar). Your job is to:
@@ -457,9 +460,24 @@ class ProactiveAgent(ToolUsingAgent):
                 tier=tier,
             )
 
-            if tier == TIER_TRIVIAL or (
-                rule and rule.decision == DECISION_ALWAYS_APPROVE
-            ):
+            # An LLM-supplied ``trivial`` tier may auto-approve only NON-effectful
+            # actions.  Effectful actions (send/delete/calendar mutations) are
+            # never auto-executed on the model's say-so — they require an explicit
+            # human approval or a user-remembered ``always_approve`` rule.  This
+            # blocks a prompt-injected proposal from labeling a side-effecting
+            # action ``trivial`` to bypass the human-in-the-loop gate.
+            is_effectful = action_type in EFFECTFUL_ACTION_TYPES
+            trivial_auto_ok = tier == TIER_TRIVIAL and not is_effectful
+            always_approved = bool(rule and rule.decision == DECISION_ALWAYS_APPROVE)
+
+            if tier == TIER_TRIVIAL and is_effectful and not always_approved:
+                logger.warning(
+                    "Proactive agent: effectful action %r was proposed as "
+                    "'trivial'; routing to human approval instead of auto-executing.",
+                    action_type,
+                )
+
+            if trivial_auto_ok or always_approved:
                 store.update_status(action.id, STATUS_APPROVED)
                 auto_approve_ids.append(action.id)
             else:

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import signal
 import sqlite3
 import subprocess
@@ -19,6 +20,31 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
+
+# An iMessage recipient handle is either an E.164-style phone number or an
+# email address.  Anything else — in particular a value containing a double
+# quote — must never reach the AppleScript builder in ``send_imessage``, where
+# it would break out of the ``participant "..."`` string literal and inject
+# arbitrary AppleScript (``do shell script`` ⇒ host command execution).
+_RECIPIENT_RE = re.compile(
+    r"""^(?:
+        \+?[0-9]{3,15}                 # phone: optional + and 3-15 digits
+        |
+        [^@\s"'\\]+@[^@\s"'\\]+\.[^@\s"'\\]+   # email: no quotes/space/backslash
+    )$""",
+    re.VERBOSE,
+)
+
+
+def is_valid_imessage_recipient(chat_identifier: str) -> bool:
+    """Return ``True`` only for a syntactically valid phone/email handle.
+
+    Used as the authorization boundary before the recipient is interpolated
+    into AppleScript, so it deliberately rejects any handle containing the
+    characters needed to escape a string literal (``"``, ``\\``).
+    """
+    return bool(_RECIPIENT_RE.match(chat_identifier))
+
 
 _DEFAULT_DB_PATH = str(Path.home() / "Library" / "Messages" / "chat.db")
 _POLL_INTERVAL = 5
@@ -70,11 +96,20 @@ def send_imessage(chat_identifier: str, message: str) -> bool:
     and silently failed on raw phone numbers, returning success while
     no message was actually sent.
     """
+    if not is_valid_imessage_recipient(chat_identifier):
+        logger.error(
+            "Refusing to send iMessage: recipient handle is not a valid "
+            "phone number or email address"
+        )
+        return False
+    # Escape both fields for AppleScript string literals.  The recipient is
+    # already validated to contain no quotes/backslashes (defense in depth).
+    recipient = chat_identifier.replace("\\", "\\\\").replace('"', '\\"')
     escaped = message.replace("\\", "\\\\").replace('"', '\\"')
     script = (
         'tell application "Messages"\n'
         "  set targetService to 1st account whose service type = iMessage\n"
-        f'  set targetBuddy to participant "{chat_identifier}" of targetService\n'
+        f'  set targetBuddy to participant "{recipient}" of targetService\n'
         f'  send "{escaped}" to targetBuddy\n'
         "end tell"
     )

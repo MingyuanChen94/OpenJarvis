@@ -7,13 +7,14 @@ All API calls are in module-level functions for easy mocking in tests.
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional
 
 import httpx
 
 from openjarvis.connectors._stubs import BaseConnector, Document, SyncStatus
+from openjarvis.connectors._timeutil import to_utc_z
 from openjarvis.core.config import DEFAULT_CONFIG_DIR
 from openjarvis.core.registry import ConnectorRegistry
 
@@ -68,7 +69,11 @@ class GitHubNotificationsConnector(BaseConnector):
         token = self._load_token()
         params: Dict[str, str] = {}
         if since is not None:
-            params["since"] = f"{since.isoformat()}Z"
+            # GitHub expects RFC 3339 UTC (e.g. ``2026-06-18T00:00:00Z``).  On
+            # an incremental sync ``since`` arrives tz-aware from the SyncEngine
+            # checkpoint, so a naive ``isoformat() + "Z"`` would emit the invalid
+            # ``…+00:00Z``; ``to_utc_z`` normalizes to a single ``Z`` suffix.
+            params["since"] = to_utc_z(since)
 
         notifications = _github_api_get(token, params=params)
 
@@ -82,7 +87,10 @@ class GitHubNotificationsConnector(BaseConnector):
             updated_at = notif.get("updated_at", "")
 
             content = f"Reason: {reason}, Repository: {repo}"
-            ts = datetime.now()
+            # Default to a tz-aware UTC timestamp so it is consistent with the
+            # tz-aware value parsed from ``updated_at`` below (avoids mixing
+            # naive/aware datetimes across Documents).
+            ts = datetime.now(tz=timezone.utc)
             if updated_at:
                 try:
                     ts = datetime.fromisoformat(updated_at.replace("Z", "+00:00"))

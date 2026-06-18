@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import patch
 
 import pytest
@@ -103,3 +103,44 @@ def test_sync_yields_documents(connector):
 def test_disconnect(connector):
     connector.disconnect()
     assert connector.is_connected() is False
+
+
+def test_since_param_well_formed_for_aware_datetime(connector):
+    """Regression: an incremental sync passes a tz-aware UTC ``since`` (as the
+    SyncEngine checkpoint produces); the outbound ``since`` param must be a
+    single-``Z`` RFC 3339 value, not the malformed ``…+00:00Z``."""
+    captured: dict = {}
+
+    def _fake_get(token, params=None):
+        captured["params"] = params
+        return _NOTIFICATIONS_RESPONSE
+
+    # Mirrors sync_engine: datetime.now(tz=timezone.utc) reloaded via fromisoformat.
+    since = datetime(2026, 6, 17, 23, 18, 49, 990147, tzinfo=timezone.utc)
+    with patch(
+        "openjarvis.connectors.github_notifications._github_api_get",
+        side_effect=_fake_get,
+    ):
+        list(connector.sync(since=since))
+
+    sent = captured["params"]["since"]
+    assert sent == "2026-06-17T23:18:49Z"  # old code emitted "...+00:00Z"
+    assert "+00:00" not in sent
+    assert sent.endswith("Z") and sent.count("Z") == 1
+
+
+def test_since_param_naive_datetime_not_shifted(connector):
+    """A naive first-sync ``since`` must be formatted as-is (no local-tz shift)."""
+    captured: dict = {}
+
+    def _fake_get(token, params=None):
+        captured["params"] = params
+        return _NOTIFICATIONS_RESPONSE
+
+    with patch(
+        "openjarvis.connectors.github_notifications._github_api_get",
+        side_effect=_fake_get,
+    ):
+        list(connector.sync(since=datetime(2026, 4, 1)))
+
+    assert captured["params"]["since"] == "2026-04-01T00:00:00Z"
