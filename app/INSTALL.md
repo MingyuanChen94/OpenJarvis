@@ -87,17 +87,7 @@ git clone https://github.com/open-jarvis/OpenJarvis.git
 cd OpenJarvis/app
 ```
 
-> **If the app isn't on your branch yet** (it currently lives on a feature branch /
-> pull request), fetch and check that branch out first, e.g.:
->
-> ```bash
-> git fetch origin claude/repo-overview-23b5pe
-> git checkout claude/repo-overview-23b5pe
-> cd app
-> ```
-
-The app is fully contained in the `app/` directory and does not depend on the
-repository's other `frontend/` app.
+The app is fully contained in the `app/` directory.
 
 ---
 
@@ -447,13 +437,11 @@ Nothing is sent anywhere unless a backend is connected.
 **Which port does the app use?**
 `5174` in dev, `4173` for the production preview. The backend default is `8000`.
 
-**Can I run this app and the existing `frontend/` Tauri app at the same time?**
-Yes — they're independent. This app's dev server is on `5174`; the other uses `5173`.
-
 **How do I switch models?**
 Use the model picker in the chat composer (populated from `/v1/models` when live, or a
 sample list in demo mode).
 
 **Is voice input working?**
-The mic/attachment buttons are UI affordances in this build; speech-to-text and file
-upload aren't wired yet.
+Speech-to-text and file upload aren't wired yet, so the mic/attachment buttons are
+hidden by default. Set `VITE_FEATURE_VOICE=1` / `VITE_FEATURE_ATTACHMENTS=1` to show
+the placeholder controls.

@@ -6,7 +6,7 @@
 # Usage:
 #   jarvis ask "What is quantum computing?"
 #   jarvis chat                  # interactive chat session
-#   jarvis serve                 # start API server for browser/desktop app
+#   jarvis serve                 # start API server (also serves the web app)
 
 [engine]
 default = "ollama"

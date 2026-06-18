@@ -1,10 +1,10 @@
-# Stage 1: Build frontend SPA
-FROM node:22-slim AS frontend
+# Stage 1: Build the web UI (app/) into static assets
+FROM node:22-slim AS webui
 
-WORKDIR /frontend
-COPY frontend/package.json frontend/package-lock.json* ./
+WORKDIR /web
+COPY app/package.json app/package-lock.json* ./
 RUN npm ci --ignore-scripts 2>/dev/null || npm install
-COPY frontend/ .
+COPY app/ .
 RUN npm run build
 
 # Stage 2: Build Python package (NVIDIA CUDA 12.4)
@@ -20,7 +20,7 @@ COPY src/ src/
 COPY scripts/install scripts/install
 COPY deploy/windows deploy/windows
 
-COPY --from=frontend /src/openjarvis/server/static src/openjarvis/server/static/
+COPY --from=webui /web/dist src/openjarvis/server/static/
 
 RUN pip install --no-cache-dir uv && \
     uv pip install --system ".[server]"

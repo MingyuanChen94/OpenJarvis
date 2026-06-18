@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/cn';
+import { features } from '@/lib/features';
 import type { ModelInfo } from '@/types';
 
 interface ComposerProps {
@@ -67,21 +68,25 @@ export function Composer({ onSend, onStop, streaming, models, model, onModelChan
             className="scrollbar-thin max-h-[200px] w-full resize-none bg-transparent px-2 py-1.5 text-sm text-text outline-none placeholder:text-muted"
           />
           <div className="flex items-center gap-1.5 px-1">
-            <Tooltip content="Attach files (demo)">
-              <Button variant="ghost" size="icon-sm" onClick={() => toast('Attachments coming soon')}>
-                <Paperclip className="h-4 w-4" />
-              </Button>
-            </Tooltip>
-            <Tooltip content="Voice input (demo)">
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={toggleMic}
-                className={cn(listening && 'text-accent')}
-              >
-                <Mic className={cn('h-4 w-4', listening && 'animate-pulse')} />
-              </Button>
-            </Tooltip>
+            {features.attachments && (
+              <Tooltip content="Attach files (demo)">
+                <Button variant="ghost" size="icon-sm" onClick={() => toast('Attachments coming soon')}>
+                  <Paperclip className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+            )}
+            {features.voiceInput && (
+              <Tooltip content="Voice input (demo)">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={toggleMic}
+                  className={cn(listening && 'text-accent')}
+                >
+                  <Mic className={cn('h-4 w-4', listening && 'animate-pulse')} />
+                </Button>
+              </Tooltip>
+            )}
 
             <select
               value={model}
