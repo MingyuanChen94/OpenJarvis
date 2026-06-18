@@ -145,7 +145,8 @@ extra:
 nav:
   - Home: index.md
   - Getting Started:
-      - Installation: getting-started/installation.md
+      - Installation: getting-started/install.md
+      - From Source: getting-started/installation.md
       - macOS Guide: getting-started/macos.md
       - Quick Start: getting-started/quickstart.md
       - Code Snippets: getting-started/snippets.md
@@ -164,6 +165,7 @@ nav:
       - Scheduled Personal Ops: tutorials/scheduled-ops.md
       - Messaging Hub: tutorials/messaging-hub.md
       - Code Companion: tutorials/code-companion.md
+      - Skills Workflow: tutorials/skills-workflow.md
   - Architecture:
       - Overview: architecture/overview.md
       - Intelligence: architecture/intelligence.md
@@ -187,6 +189,7 @@ nav:
       - Scheduled Monitor: user-guide/scheduled-monitor.md
       - Simple Chat: user-guide/chat-simple.md
       - Agents: user-guide/agents.md
+      - Skills: user-guide/skills.md
       - Channels & Connectors: user-guide/channels-and-connectors.md
       - Tools: user-guide/tools.md
       - Memory: user-guide/memory.md

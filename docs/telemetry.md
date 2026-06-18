@@ -24,7 +24,7 @@ collected, where the data goes, and how to opt out.
 | `install_stage_completed` | `install.sh` | Per-stage timing — where do people drop off? |
 | `install_completed` | `install.sh` | Did the install succeed? |
 | `install_failed` | `install.sh` | Which stage failed, and on what OS |
-| `app_opened` | Backend + frontend | DAU / WAU / MAU |
+| `app_opened` | Backend + web app | DAU / WAU / MAU |
 | `setup_completed` | Frontend | First-run wizard finished |
 | `first_chat_sent` | Backend | First-ever message — activation |
 | `uninstall_started` | `uninstall.sh` (if user runs it) | Churn signal |
@@ -93,7 +93,7 @@ dropped. Tests covering the patterns: [`tests/analytics/test_redaction.py`](../t
 ## How identity works
 
 A single UUID v4 is generated on first install and stored at
-`~/.openjarvis/anon_id`. The install script, backend, and frontend all
+`~/.openjarvis/anon_id`. The install script, backend, and web app all
 read the same file so events across the full lifecycle tie to one
 person — without us ever knowing who that person is.
 

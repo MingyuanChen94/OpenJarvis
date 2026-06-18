@@ -9,6 +9,7 @@ import { ChatView } from '@/components/chat/ChatView';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { useApplyTheme } from '@/hooks/useApplyTheme';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useAppOpened } from '@/hooks/useAppOpened';
 import { useSettings } from '@/store/settings';
 
 // Non-flagship routes are code-split so their heavy deps (e.g. Recharts on the
@@ -34,6 +35,7 @@ function RouteFallback() {
 export default function App() {
   useApplyTheme();
   useBackendStatus();
+  useAppOpened();
   const theme = useSettings((s) => s.theme);
   const isDark =
     theme === 'dark' ||

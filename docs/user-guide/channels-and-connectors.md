@@ -418,7 +418,7 @@ We recommend creating **one Slack app** that handles both. The App Manifest belo
 
 1. **Grant Full Disk Access** to your terminal app:
    - Open System Settings → Privacy & Security → Full Disk Access
-   - Enable access for Terminal, iTerm, Warp, or the OpenJarvis desktop app
+   - Enable access for Terminal, iTerm, or Warp
 
 2. Apple Notes is detected automatically when Full Disk Access is granted
 
