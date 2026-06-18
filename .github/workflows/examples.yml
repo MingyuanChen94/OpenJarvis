@@ -1,0 +1,53 @@
+name: Examples CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'examples/**'
+      - 'configs/**'
+      - '.github/workflows/examples.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'examples/**'
+      - 'configs/**'
+      - '.github/workflows/examples.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: examples-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      # Catches syntax rot in example scripts without importing/running them
+      # (so missing optional deps don't cause false failures).
+      - name: Byte-compile example scripts
+        run: python -m compileall -q examples
+
+      # Ensures bundled configs and example TOML files stay parseable.
+      - name: Validate TOML configs parse
+        run: |
+          python - <<'PY'
+          import sys, tomllib, pathlib
+          bad = []
+          paths = list(pathlib.Path("configs").rglob("*.toml")) + list(pathlib.Path("examples").rglob("*.toml"))
+          for p in paths:
+              try:
+                  tomllib.loads(p.read_text())
+              except Exception as e:  # noqa: BLE001
+                  bad.append(f"{p}: {e}")
+          if bad:
+              print("\n".join(bad))
+              sys.exit(1)
+          print(f"All {len(paths)} TOML files parsed OK")
+          PY
