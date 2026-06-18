@@ -1,8 +1,9 @@
 # OpenJarvis App
 
 A fresh, standalone, installable web app (PWA) for OpenJarvis — a modern, highly
-interactive UI over the `jarvis serve` API. Built from scratch with its own design
-system; it does **not** touch or depend on the existing `frontend/` (Tauri) app.
+interactive UI over the `jarvis serve` API. It is the canonical OpenJarvis web UI:
+`jarvis serve` serves it, the Python package ships it, and it also runs standalone or
+as a container.
 
 > Runs fully **without a backend** thanks to an auto-detected demo/mock mode, so you
 > can click through every screen and watch chat "stream" with zero setup.

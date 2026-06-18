@@ -38,25 +38,9 @@ OpenJarvis is that stack. It is a framework for local-first personal AI, built a
 
 ## Get Started
 
-=== "Browser App"
+=== "Web App"
 
-    Run the full chat UI locally with one script:
-
-    ```bash
-    git clone https://github.com/open-jarvis/OpenJarvis.git
-    cd OpenJarvis
-    ./scripts/quickstart.sh
-    ```
-
-    This installs dependencies, starts Ollama + a local model, launches the backend
-    and frontend, and opens `http://localhost:5173` in your browser.
-
-=== "Desktop App"
-
-    The desktop app is a native window for the OpenJarvis UI.
-    The backend (Ollama + inference) runs on your machine — start it first, then open the app.
-
-    **Step 1.** Start the backend:
+    Run the graphical chat UI locally with one script:
 
     ```bash
     git clone https://github.com/open-jarvis/OpenJarvis.git
@@ -64,17 +48,9 @@ OpenJarvis is that stack. It is a framework for local-first personal AI, built a
     ./scripts/quickstart.sh
     ```
 
-    **Step 2.** Download and open the desktop app:
-
-    [Download for macOS](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_universal.dmg){ .md-button .md-button--primary }
-
-    Also available for [Windows](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_x64-setup.exe), [Linux (DEB)](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_amd64.deb), and [Linux (RPM)](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis-1.0.1-1.x86_64.rpm). See the [Downloads](downloads.md) page for details.
-
-    The app connects to `http://localhost:8000` automatically.
-
-    !!! warning "macOS first launch"
-
-        Run `xattr -cr /Applications/OpenJarvis.app` if the app shows as "damaged".
+    This installs dependencies, starts Ollama + a local model, builds the web app, and
+    serves it from the backend at `http://localhost:8000` — opened automatically in your
+    browser. Install it as a PWA from your browser's "Install app" control.
 
 === "Python SDK"
 

@@ -37,7 +37,7 @@ jarvis ask "Explain the difference between TCP and UDP"
 # Interactive chat session (multi-turn conversation)
 jarvis chat
 
-# Start the API server for the browser or desktop app
+# Start the API server (it also serves the web app)
 jarvis serve
 
 # Override the model for a single query
@@ -92,29 +92,23 @@ To pull a new model:
 ollama pull qwen3.5:35b
 ```
 
-## Using the Browser App
+## Using the Web App
 
-Start the backend server and the React frontend with one command:
+Build the web app and start the backend that serves it with one command:
 
 ```bash
 ./scripts/quickstart.sh
 ```
 
-This opens [http://localhost:5173](http://localhost:5173) in your browser with a full chat interface, streaming responses, and an energy monitoring dashboard.
+This opens [http://localhost:8000](http://localhost:8000) in your browser with a full chat interface, streaming responses, and an energy monitoring dashboard. It's installable as a PWA.
 
-To run just the API server (for use with the desktop app or external clients):
+The web app ships inside the package, so any running server exposes it:
 
 ```bash
 jarvis serve
 ```
 
-The server is OpenAI-compatible, so any client that works with the OpenAI API can point to `http://localhost:8000/v1`.
-
-## Using the Desktop App
-
-1. Start the backend: `jarvis serve` (or `./scripts/quickstart.sh`)
-2. Download and open the desktop app from the [releases page](https://github.com/open-jarvis/OpenJarvis/releases)
-3. The app connects to `http://localhost:8000` automatically
+The server is also OpenAI-compatible, so any client that works with the OpenAI API can point to `http://localhost:8000/v1`.
 
 ## Switching Models
 
@@ -151,4 +145,4 @@ OPENJARVIS_MODEL=qwen3.5:9b jarvis ask "Hello"
 
 **Want to add tools later?** -- Switch to the [Code Assistant](code-assistant.md) or [Deep Research](deep-research.md) config. Simple chat is intentionally minimal.
 
-**Browser app not loading** -- Make sure both the backend (`jarvis serve`) and frontend are running. The `./scripts/quickstart.sh` script starts both automatically.
+**Web app not loading** -- Make sure the backend (`jarvis serve`) is running and the web app was built into its static dir. `./scripts/quickstart.sh` does both automatically.

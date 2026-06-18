@@ -1,127 +1,54 @@
 ---
-title: Installation
-description: Get OpenJarvis running — browser app, desktop app, CLI, or Python SDK
+title: Manual & From-Source Install
+description: Run OpenJarvis from source — web app, CLI, or Python SDK — plus requirements, optional extras, and inference backends.
 search:
   boost: 3
 ---
 
-# Installation
+# Manual & From-Source Install
+
+!!! tip "Just want it running?"
+    For the one-line installers, see [Installation](install.md). This page covers
+    running from source plus requirements, optional extras, and inference backends.
 
 OpenJarvis runs entirely on your hardware. Choose the interface that fits your workflow.
 
 ---
 
-## Browser App
+## Web App
 
-Run the full chat UI in your browser. Everything stays local — the backend runs on
-your machine and the frontend connects via `localhost`.
+The web app is the graphical interface for OpenJarvis — a modern, installable PWA.
+Everything stays local: the backend runs on your machine and the app talks to it over
+`localhost`.
 
-### One-command setup
+### Served by the backend (simplest)
+
+The app ships inside the Python package, so any `jarvis serve` exposes it:
 
 ```bash
-git clone https://github.com/open-jarvis/OpenJarvis.git
-cd OpenJarvis
-./scripts/quickstart.sh
+uv run jarvis serve --port 8000
 ```
 
-The script handles everything:
+Then open [http://localhost:8000](http://localhost:8000). Use your browser's
+"Install app" control to install it as a PWA.
 
-1. Checks for Python 3.10+ and Node.js 18+
-2. Installs Ollama if not present and pulls a starter model
-3. Installs Python and frontend dependencies
-4. Starts the backend API server and frontend dev server
-5. Opens `http://localhost:5173` in your browser
+### From source (for UI development)
 
-### Manual setup
-
-If you prefer to run each step yourself:
-
-=== "Step 1: Clone and install"
-
-    ```bash
-    git clone https://github.com/open-jarvis/OpenJarvis.git
-    cd OpenJarvis
-    uv sync --extra server
-    uv run maturin develop -m rust/crates/openjarvis-python/Cargo.toml
-    cd frontend && npm install && cd ..
-    ```
-
-    !!! note "Prerequisites"
-        Requires [Rust](https://rustup.rs/) (`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`).
-        On Python 3.14+, set `PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1` before the `maturin` command.
-
-=== "Step 2: Start Ollama"
-
-    ```bash
-    # Install from https://ollama.com if not already installed
-    ollama serve &
-    ollama pull qwen3:0.6b
-    ```
-
-=== "Step 3: Start backend"
-
-    ```bash
-    uv run jarvis serve --port 8000
-    ```
-
-=== "Step 4: Start frontend"
-
-    ```bash
-    cd frontend
-    npm run dev
-    ```
-
-Then open [http://localhost:5173](http://localhost:5173).
-
----
-
-## Desktop App
-
-The desktop app is a native window for the OpenJarvis chat UI. All inference and backend
-processing happens on your local machine — the app connects to the backend you start locally.
-
-### Setup
-
-**Step 1.** Start the backend (same as Browser App):
+To run the app's Vite dev server with hot-reload against a local backend:
 
 ```bash
-git clone https://github.com/open-jarvis/OpenJarvis.git
-cd OpenJarvis
-./scripts/quickstart.sh
-```
+# Terminal 1 — backend
+uv run jarvis serve --port 8000
 
-**Step 2.** Download and open the desktop app:
-
-| Platform | Download |
-|----------|----------|
-| macOS (Universal) | [:material-download: **OpenJarvis.dmg**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_universal.dmg) |
-| Windows (64-bit) | [:material-download: **OpenJarvis-setup.exe**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_x64-setup.exe) |
-| Linux (DEB) | [:material-download: **OpenJarvis.deb**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_amd64.deb) |
-| Linux (RPM) | [:material-download: **OpenJarvis.rpm**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis-1.0.1-1.x86_64.rpm) |
-| Linux (AppImage) | [:material-download: **OpenJarvis.AppImage**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_amd64.AppImage) |
-
-The app connects to `http://localhost:8000` automatically.
-
-!!! warning "macOS: \"app is damaged\""
-    If macOS says the app is damaged, clear the Gatekeeper quarantine flag:
-    ```bash
-    xattr -cr /Applications/OpenJarvis.app
-    ```
-    This is normal for open-source apps distributed outside the App Store.
-
-!!! tip "All releases"
-    Browse all versions on the [GitHub Releases](https://github.com/open-jarvis/OpenJarvis/releases) page.
-
-### Build from source
-
-```bash
-git clone https://github.com/open-jarvis/OpenJarvis.git
-cd OpenJarvis/desktop
+# Terminal 2 — web app (proxies /v1, /api, /health to :8000)
+cd app
 npm install
-npm run tauri build
+npm run dev
 ```
 
-The built installer will be in `frontend/src-tauri/target/release/bundle/`.
+Then open [http://localhost:5174](http://localhost:5174). The app also builds to a
+static bundle (`npm run build`) and ships its own container — see the
+[app/ README](https://github.com/open-jarvis/OpenJarvis/tree/main/app).
 
 ---
 
@@ -243,7 +170,7 @@ See the [Python SDK guide](../user-guide/python-sdk.md) for the full API referen
 | Git | any | [git-scm.com](https://git-scm.com/) or `brew install git` (macOS) | Required |
 | Rust | stable | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` | Required for the Rust extension |
 | Inference backend | any | See [below](#setting-up-an-inference-backend) | At least one of Ollama, vLLM, llama.cpp, SGLang, or a cloud API |
-| Node.js | 18+ | [nodejs.org](https://nodejs.org/) or `brew install node` (macOS) | Required for the browser UI; 22+ for the WhatsApp Baileys channel bridge |
+| Node.js | 20+ | [nodejs.org](https://nodejs.org/) or `brew install node` (macOS) | Required only to build/run the web app (`app/`) from source; 22+ for the WhatsApp Baileys channel bridge |
 
 !!! tip "macOS users"
     See the [macOS Installation Guide](macos.md) for a complete step-by-step walkthrough

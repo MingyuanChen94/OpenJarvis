@@ -130,7 +130,7 @@ jarvis digest --schedule       # Show current schedule
 
 ## Saying "Good morning"
 
-When chatting with Jarvis (via CLI, desktop, or browser), saying "Good morning" or "morning digest" automatically triggers the digest — no need to use the `digest` command explicitly.
+When chatting with Jarvis (via CLI or the web app), saying "Good morning" or "morning digest" automatically triggers the digest — no need to use the `digest` command explicitly.
 
 ## Configuration Reference
 
@@ -201,9 +201,9 @@ jarvis serve  # Start the server
 # POST /api/digest/schedule  — Update schedule {"enabled": true, "cron": "0 6 * * *"}
 ```
 
-## Frontend
+## Web App
 
-The desktop and browser apps show an inline audio player when a digest is generated. The "Connect" buttons in the setup wizard handle OAuth flows automatically — click to connect, authorize in the browser popup, done.
+The web app shows an inline audio player when a digest is generated. The "Connect" buttons in the setup wizard handle OAuth flows automatically — click to connect, authorize in the browser popup, done.
 
 ## Troubleshooting
 
