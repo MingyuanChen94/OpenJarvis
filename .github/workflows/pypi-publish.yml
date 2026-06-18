@@ -47,21 +47,22 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: app/package-lock.json
 
-      - name: Build frontend and bundle into package
+      - name: Build web UI and bundle into package
         run: |
           set -euo pipefail
-          cd frontend
+          cd app
           npm ci
-          # Vite is configured (frontend/vite.config.ts) with
-          # `outDir: '../src/openjarvis/server/static'` and
-          # `emptyOutDir: true`, so the build writes directly into the
-          # Python package's static dir and clears stale assets itself.
-          # No rm/cp is needed — and the previous `dist/`-assuming logic
-          # was broken because `frontend/dist/` is never produced.
+          # The app (app/vite.config.ts) builds to `app/dist`; we copy it
+          # into the Python package's static dir, which `jarvis serve`
+          # serves (src/openjarvis/server/app.py). The dir is recreated
+          # fresh each build so stale assets never linger in the wheel.
           npm run build
           STATIC=../src/openjarvis/server/static
+          rm -rf "$STATIC"
+          mkdir -p "$STATIC"
+          cp -r dist/. "$STATIC/"
           test -s "$STATIC/index.html" || {
             echo "::error::${STATIC}/index.html missing or empty after build"
             exit 1

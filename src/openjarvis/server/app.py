@@ -251,7 +251,7 @@ def create_app(
         pass  # traces are optional; don't block server startup
 
     # Wire up external analytics if enabled (PostHog) — never block startup.
-    # Note: we do NOT fire app_opened here. The frontend owns that event
+    # Note: we do NOT fire app_opened here. The web app owns that event
     # because "server started" (this code path) is not the same as "user
     # opened the app" — the server can run headless via cron, daemons,
     # or test suites.

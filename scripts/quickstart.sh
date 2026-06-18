@@ -2,8 +2,9 @@
 set -euo pipefail
 
 # ── OpenJarvis Quickstart ─────────────────────────────────────────────
-# One-command setup: installs deps, starts Ollama + model, launches
-# the backend API server and frontend, then opens the browser.
+# One-command setup: installs deps, starts Ollama + model, builds the web
+# app, launches the backend API server (which serves the app), then opens
+# the browser.
 #
 # Usage:
 #   git clone https://github.com/open-jarvis/OpenJarvis.git
@@ -157,10 +158,12 @@ uv run maturin develop -m rust/crates/openjarvis-python/Cargo.toml --quiet 2>/de
   || uv run maturin develop -m rust/crates/openjarvis-python/Cargo.toml
 ok "Rust extension built"
 
-# ── 8. Install frontend dependencies ────────────────────────────────
-info "Installing frontend dependencies..."
-(cd frontend && npm install --silent 2>/dev/null || npm install)
-ok "Frontend dependencies installed"
+# ── 8. Build the web app into the backend's static dir ──────────────
+info "Building the web app..."
+(cd app && (npm install --silent 2>/dev/null || npm install) && npm run build)
+STATIC="src/openjarvis/server/static"
+rm -rf "$STATIC" && mkdir -p "$STATIC" && cp -r app/dist/. "$STATIC/"
+ok "Web app built (served by the backend)"
 
 # ── 9. Start backend ────────────────────────────────────────────────
 info "Starting backend API server on port 8000..."
@@ -174,15 +177,8 @@ else
   warn "Backend may still be starting..."
 fi
 
-# ── 10. Start frontend ──────────────────────────────────────────────
-info "Starting frontend dev server on port 5173..."
-(cd frontend && npm run dev) &>/dev/null &
-CLEANUP_PIDS+=($!)
-sleep 3
-ok "Frontend running at http://localhost:5173"
-
-# ── 11. Open browser ────────────────────────────────────────────────
-URL="http://localhost:5173"
+# ── 10. Open browser ────────────────────────────────────────────────
+URL="http://localhost:8000"
 info "Opening $URL ..."
 case "$(uname -s)" in
   Darwin) open "$URL" ;;
@@ -194,8 +190,8 @@ esac
 echo ""
 echo -e "${GREEN}${BOLD}  OpenJarvis is running!${NC}"
 echo ""
-echo "  Chat UI:  http://localhost:5173"
-echo "  API:      http://localhost:8000"
+echo "  Web app:  http://localhost:8000"
+echo "  API:      http://localhost:8000/v1"
 echo "  Model:    $MODEL"
 echo ""
 echo "  Press Ctrl+C to stop all services."

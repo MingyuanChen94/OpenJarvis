@@ -117,12 +117,12 @@ Or generate a config with digest included:
 jarvis init --digest
 ```
 
-This guide walks through the core workflows of OpenJarvis: the browser app, CLI, Python SDK, agents with tools, memory, benchmarks, and the API server.
+This guide walks through the core workflows of OpenJarvis: the web app, CLI, Python SDK, agents with tools, memory, benchmarks, and the API server.
 
 !!! info "Prerequisites"
     Make sure you have [installed OpenJarvis](installation.md) and have at least one inference backend running (e.g., `ollama serve`).
 
-## Browser App
+## Web App
 
 The quickest way to experience OpenJarvis is the full chat UI running in your browser:
 
@@ -132,8 +132,8 @@ cd OpenJarvis
 ./scripts/quickstart.sh
 ```
 
-This launches the backend API server and a React frontend at [http://localhost:5173](http://localhost:5173).
-You get a ChatGPT-like interface with streaming responses, tool use, energy monitoring, and a telemetry dashboard — all running locally on your hardware.
+This builds the web app, launches the backend API server, and serves the app at [http://localhost:8000](http://localhost:8000).
+You get a ChatGPT-like interface with streaming responses, tool use, energy monitoring, and a telemetry dashboard — all running locally on your hardware. It's installable as a PWA.
 
 To stop all services, press ++ctrl+c++ in the terminal.
 

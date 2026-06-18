@@ -64,17 +64,8 @@ MagicMock/
 # MkDocs build output
 site/
 
-# Frontend
-frontend/node_modules/
-frontend/dist/
-
-# Desktop
-desktop/node_modules/
-desktop/dist/
+# Web UI build output served by the backend
 src/openjarvis/server/static/
-
-# Desktop (Tauri)
-frontend/src-tauri/target/
 
 # Worktrees
 .worktrees/
@@ -90,9 +81,6 @@ docs/superpowers/
 # Claude Code project instructions (per-developer)
 CLAUDE.md
 .claude/
-
-# Tauri auto-generated schemas
-**/src-tauri/gen/schemas/
 
 # NFS lock artifacts
 .nfs*

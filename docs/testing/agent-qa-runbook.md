@@ -1,6 +1,6 @@
 # Agent QA Runbook
 
-Manual testing scenarios for persistent agents in the CLI and desktop app.
+Manual testing scenarios for persistent agents in the CLI and web app.
 
 ## Environment Setup
 
@@ -9,7 +9,7 @@ Manual testing scenarios for persistent agents in the CLI and desktop app.
 | Ollama running with model | `ollama list` shows `qwen3:8b` |
 | OpenJarvis initialized | `uv run jarvis doctor` all green |
 | Rust extension built | `uv run maturin develop -m rust/crates/openjarvis-python/Cargo.toml` |
-| Desktop app running | `uv run jarvis serve` + `cd frontend && npm run dev` |
+| Web app running | `uv run jarvis serve` + `cd app && npm run dev` |
 | Slack credentials | `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN` set, bot invited to test channel |
 | Gmail credentials | OAuth credentials.json downloaded, token generated |
 | Twitter credentials | All 5 env vars set (bearer + OAuth 1.0a) |
@@ -34,7 +34,11 @@ Manual testing scenarios for persistent agents in the CLI and desktop app.
 | 11 | Multi-agent | Launch 3 agents, different intervals, run daemon | All fire independently | [ ] |
 | 12 | Template tools | Create from each template, `jarvis agents info <id>` | All curated default tools listed | [ ] |
 
-## Desktop App Scenarios
+## Web App Scenarios
+
+> These scenarios describe agent-management UI flows. The exact controls are being
+> re-validated against the web app (`app/`); treat panel/tab names as indicative.
+
 
 | # | Scenario | Steps | Expected Result | Pass |
 |---|----------|-------|-----------------|------|

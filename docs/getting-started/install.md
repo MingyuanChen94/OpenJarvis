@@ -8,9 +8,11 @@
 | **Linux** | `curl -fsSL https://open-jarvis.github.io/OpenJarvis/install.sh \| bash` | [Linux install](linux.md) |
 | **WSL2 on Windows** | `curl -fsSL https://open-jarvis.github.io/OpenJarvis/install.sh \| bash` (run inside Ubuntu) | [WSL2 install](wsl2.md) |
 | **Native Windows** | `irm https://open-jarvis.github.io/OpenJarvis/install.ps1 \| iex` | [Native Windows install](windows-native.md) |
-| **Desktop GUI** | Download from the [latest release](https://github.com/open-jarvis/OpenJarvis/releases) | — |
 
 The bash and PowerShell installers do the same thing on their respective hosts. The rest of this page documents the bash installer in detail; the [native Windows guide](windows-native.md) is the equivalent reference for PowerShell.
+
+!!! tip "Prefer a graphical interface?"
+    A modern, installable web app (PWA) ships with the package. After installing, run `jarvis serve` and open <http://localhost:8000>. It also runs standalone or as a container — see the [web app guide](https://github.com/open-jarvis/OpenJarvis/tree/main/app).
 
 ## Bash installer
 

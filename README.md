@@ -45,11 +45,12 @@ Pick your platform and run one command. Each installer handles [uv](https://docs
 |---|---|
 | **macOS · Linux · WSL2** | `curl -fsSL https://open-jarvis.github.io/OpenJarvis/install.sh \| bash` |
 | **Native Windows** | `irm https://open-jarvis.github.io/OpenJarvis/install.ps1 \| iex` |
-| **Desktop GUI** | Download `.exe` / `.dmg` / `.deb` / `.rpm` / `.AppImage` from the [latest release](https://github.com/open-jarvis/OpenJarvis/releases) |
 
 Then `jarvis` to start. The Rust extension and larger models continue downloading in the background; `jarvis doctor` shows status.
 
-Platform-specific notes (WSL2 setup, native-Windows scheduled-task service, desktop prerequisites, manual / contributor install): see the [installation docs](https://open-jarvis.github.io/OpenJarvis/getting-started/install/).
+Prefer a graphical interface? Run `jarvis serve` and open <http://localhost:8000> — a modern, installable web app (PWA) ships with the package. It also runs standalone or as a container; see the [web app guide](app/README.md).
+
+Platform-specific notes (WSL2 setup, native-Windows scheduled-task service, manual / contributor install): see the [installation docs](https://open-jarvis.github.io/OpenJarvis/getting-started/install/).
 
 ## Quick Start
 
